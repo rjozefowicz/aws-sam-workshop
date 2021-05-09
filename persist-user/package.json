@@ -1,0 +1,17 @@
+{
+  "name": "persist-user",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "aws-sdk": "^2.903.0"
+  },
+  "dependencies": {
+    "uuid": "^8.3.2"
+  }
+}

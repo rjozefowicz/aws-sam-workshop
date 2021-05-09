@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Users database</title>
+    <style>
+        .item1 {
+            grid-area: header;
+        }
+
+        .item2 {
+            grid-area: menu;
+        }
+
+        .item3 {
+            grid-area: main;
+        }
+
+        .item4 {
+            grid-area: right;
+        }
+
+        .item5 {
+            grid-area: footer;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-areas:
+                'header header header header header header'
+                'main main main main right right'
+                'footer footer footer footer footer footer';
+            grid-gap: 10px;
+            background-color: #96a3ad;
+            padding: 10px;
+        }
+
+        .grid-container>div {
+            background-color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            padding: 20px 0;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="grid-container">
+        <div class="item1"><h1>Users database</h1></div>
+        <div class="item3">
+            <h2>Users</h2>
+            <div id="users">
+
+            </div>
+        </div>
+        <div class="item4">
+            <h2>Add new user</h2>
+            <form>
+                <label for="email">E-mail</label>
+                <input type="text" id="email" name="email" /><br/>
+                <label for="firstName">First name</label>
+                <input type="text" id="firstName" name="firstName" /><br/>
+                <label for="lastName">Last name</label>
+                <input type="text" id="lastName" name="lastName" /><br/>
+                <button id="addBtn" type="button" onclick="add()">Add</button>
+            </form>
+        </div>
+        <div class="item5">
+        
+        </div>
+    </div>
+
+</body>
+<script>
+    const API = "https://hi7rf34s15.execute-api.eu-west-1.amazonaws.com/Prod/users";
+
+    function loadUsers() {
+        fetch(API).then(res => {
+            if (res.status === 200) {
+                res.json().then(users => {
+                    const usersContainer = document.getElementById("users");
+                    users.forEach(user => {
+                        const userElement = document.createElement("p");
+                        userElement.innerText = user.email;
+                        usersContainer.append(userElement);
+                    });
+                })
+            } else {
+                alert("Something went wrong");
+            }
+        })
+    }
+
+    function add() {
+        const email = document.getElementById("email").innerText;
+        const firstName = document.getElementById("firstName").innerText;
+        const lastName = document.getElementById("lastName").innerText;
+
+        if (email && firstName && lastName) {
+            fetch(API, {
+                body: JSON.stringify({
+                    email,
+                    firstName, 
+                    lastName
+                }),
+                method: "POST"
+            }).then(res => {
+                if (res.status === 200) {
+                    loadUsers();
+                } else {
+                    alert("Something went wrong");
+                }
+            })
+        } else {
+            alert("Incomplete form");
+        }
+    }
+
+    loadUsers();
+</script>
+
+</html>

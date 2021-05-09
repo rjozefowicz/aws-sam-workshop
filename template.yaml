@@ -1,0 +1,69 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Globals:
+  Function:
+    Timeout: 3
+  Api:
+    Cors:
+      AllowMethods: "'*'"
+      AllowHeaders: "'*'"
+      AllowOrigin: "'*'"
+      
+Resources:
+  QueryUsersFunction:
+    Type: AWS::Serverless::Function 
+    Properties:
+      CodeUri: query-users/
+      Handler: app.lambdaHandler
+      Runtime: nodejs14.x
+      Policies: AmazonDynamoDBFullAccess
+      Environment:
+        Variables:
+          USERS_TABLE: !Ref UsersTable
+      Events:
+        GetUsers:
+          Type: Api
+          Properties:
+            Path: /users
+            Method: get
+        GetSingleUser:
+          Type: Api
+          Properties:
+            Path: /users/{id}
+            Method: get
+  PersistUserFunction:
+    Type: AWS::Serverless::Function 
+    Properties:
+      CodeUri: persist-user/
+      Handler: app.lambdaHandler
+      Runtime: nodejs14.x
+      Policies: AmazonDynamoDBFullAccess
+      Environment:
+        Variables:
+          USERS_TABLE: !Ref UsersTable
+      Events:
+        PersistUser:
+          Type: Api
+          Properties:
+            Path: /users
+            Method: post
+  UsersTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: id
+        Type: String
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+Outputs:
+  UsersHttpApi:
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/users/"
+  QueryUsersFunction:
+    Value: !GetAtt QueryUsersFunction.Arn
+  PersistUserFunction:
+    Value: !GetAtt PersistUserFunction.Arn
+  UsersTable:
+    Value: !GetAtt UsersTable.Arn
