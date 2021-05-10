@@ -9,8 +9,17 @@ Globals:
       AllowMethods: "'*'"
       AllowHeaders: "'*'"
       AllowOrigin: "'*'"
-      
+
+Parameters:
+  AppStage:
+    Type: String
+    Default: api
+
 Resources:
+  UsersApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !Ref AppStage
   QueryUsersFunction:
     Type: AWS::Serverless::Function 
     Properties:
@@ -27,11 +36,13 @@ Resources:
           Properties:
             Path: /users
             Method: get
+            RestApiId: !Ref UsersApi
         GetSingleUser:
           Type: Api
           Properties:
             Path: /users/{id}
             Method: get
+            RestApiId: !Ref UsersApi
   PersistUserFunction:
     Type: AWS::Serverless::Function 
     Properties:
@@ -48,6 +59,7 @@ Resources:
           Properties:
             Path: /users
             Method: post
+            RestApiId: !Ref UsersApi
   UsersTable:
     Type: AWS::Serverless::SimpleTable
     Properties:
@@ -60,7 +72,7 @@ Resources:
 
 Outputs:
   UsersHttpApi:
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/users/"
+    Value: !Sub "https://${UsersApi}.execute-api.${AWS::Region}.amazonaws.com/${AppStage}/users/"
   QueryUsersFunction:
     Value: !GetAtt QueryUsersFunction.Arn
   PersistUserFunction:
