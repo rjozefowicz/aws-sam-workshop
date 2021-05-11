@@ -9,7 +9,7 @@ const headers = {
 
 exports.lambdaHandler = async (event, context) => {
     try {
-        if (event.path === '/users/{id}') {
+        if (event.resource === '/users/{id}') {
             const id = event.pathParameters.id;
             const result = await client.get({
                 TableName: process.env.USERS_TABLE,
