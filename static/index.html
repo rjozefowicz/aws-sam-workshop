@@ -73,7 +73,7 @@
 
 </body>
 <script>
-    const API = "https://hi7rf34s15.execute-api.eu-west-1.amazonaws.com/Prod/users";
+    const API = "https://eonas2idm0.execute-api.eu-west-1.amazonaws.com/Prod/users";
 
     function loadUsers() {
         fetch(API).then(res => {
@@ -93,9 +93,9 @@
     }
 
     function add() {
-        const email = document.getElementById("email").innerText;
-        const firstName = document.getElementById("firstName").innerText;
-        const lastName = document.getElementById("lastName").innerText;
+        const email = document.getElementById("email").value;
+        const firstName = document.getElementById("firstName").value;
+        const lastName = document.getElementById("lastName").value;
 
         if (email && firstName && lastName) {
             fetch(API, {
@@ -107,6 +107,8 @@
                 method: "POST"
             }).then(res => {
                 if (res.status === 200) {
+                    const usersContainer = document.getElementById("users");
+                    usersContainer.innerHTML = "";
                     loadUsers();
                 } else {
                     alert("Something went wrong");
